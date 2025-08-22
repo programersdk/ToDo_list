@@ -1,4 +1,4 @@
-var todo = [];
+var a, todo = [];
            var docu = document.getElementById("add")
            var up = document.getElementById("update")
  
@@ -34,14 +34,20 @@ function showlist() {
 }
 function update(h) {
   var doc = document.getElementById("input");
-  doc.value = todo.splice(h, 1);
-  showlist()
+  doc.value = todo[h];
+  a = h;
      docu.style.display = "none"
      up.style.display ="block"
      
   }
+function updatelist(){
+  todo[a] = doc.value 
+   doc.value = "";
+  showlist();
+}
 
 function delet(index) {
   todo.splice(index, 1);
   showlist();
 }
+
