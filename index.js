@@ -1,53 +1,90 @@
-var a, todo = [];
-           var docu = document.getElementById("add")
-           var up = document.getElementById("update")
- 
-           
-           var ad = document.getElementById("todo-iput")
-           ad.style.display="none"
 
-           function disply(){
-            ad.style.display="flex"
-           }
+let todos = JSON.parse(localStorage.getItem("todos")) || [];
+let currentEditIndex = null;
 
-  color()        
-             function color(){
-            docu.style.display = "block"
-            up.style.display ="none"
-             }
+const addBtn = document.getElementById("add");
+const updateBtn = document.getElementById("update");
+const inputBox = document.getElementById("input");
+const inputDiv = document.getElementById("todo-iput");
+
+inputDiv.style.display="none"
+showList();
+setAddMode();
+
+function disply() {
+  inputDiv.style.display = "flex";
+  setAddMode();
+}
+
+function setAddMode() {
+  addBtn.style.display = "block";
+  updateBtn.style.display = "none";
+  inputBox.value = "";
+  currentEditIndex = null;
+}
+
+function setUpdateMode(index) {
+  addBtn.style.display = "none";
+  updateBtn.style.display = "block";
+  inputBox.value = todos[index];
+  currentEditIndex = index;
+}
+
 function addlist() {
-  var add = document.getElementById("input");
-  if (add.value === "") {
-    alert("Enter some........!");
+  const value = inputBox.value.trim();
+  if (value === "") {
+    alert("Please enter a task!");
     return;
   }
-  todo.push(add.value);
-  add.value = "";
-  showlist();
-}
-function showlist() {
-  var showlist = document.getElementById("show");
-  showlist.innerHTML = "";
-  for (var i = 0; i < todo.length; i++) {
-    showlist.innerHTML += `<div class="g"><div class="gt"><li onclick="update(${i})">${todo[i]}</li></div><button class="gun" onclick="delet(${i})">delet</button></div>`;
-  }
-}
-function update(h) {
-  var doc = document.getElementById("input");
-  doc.value = todo[h];
-  a = h;
-     docu.style.display = "none"
-     up.style.display ="block"
-     
-  }
-function updatelist(){
-  todo[a] = doc.value 
-   doc.value = "";
-  showlist();
+  todos.push(value);
+  saveTodos();
+  inputBox.value = "";
+  showList();
 }
 
-function delet(index) {
-  todo.splice(index, 1);
-  showlist();
+function showList() {
+  const show = document.getElementById("show");
+  show.innerHTML = "";
+  todos.forEach((task, i) => {
+    show.innerHTML += `
+      <div class="g">
+        <div class="gt">
+          <li onclick="updateTask(${i})"><input type="checkbox">${task}</li>
+        </div>
+        <button class="gun" onclick="deleteTask(${i})">Delete</button>
+      </div>
+    `;
+  });
+  saveTodos();
 }
+
+function updateTask(index) {
+  inputDiv.style.display = "flex";
+  setUpdateMode(index);
+}
+
+function updatelist() {
+  if (currentEditIndex === null) return;
+  const value = inputBox.value.trim();
+  if (value === "") {
+    alert("Please enter a task!");
+    return;
+  }
+  todos[currentEditIndex] = value;
+  saveTodos();
+  setAddMode();
+  showList();
+}
+
+function deleteTask(index) {
+  todos.splice(index, 1);
+  saveTodos();
+  showList();
+}
+
+function saveTodos() {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+
 
